@@ -7,6 +7,8 @@ import { libraryPaths } from './core/paths';
 import { regenerateLibraryNote } from './library/moc';
 import type LibraryNotesPlugin from './main';
 import { configuredSources, getSource, isSourceId } from './sources';
+import { isSignedIn, isSignInAvailable, signOut } from './sources/hardcover/auth';
+import { signInWithHardcover } from './ui/hardcover-sign-in';
 import type { SourceId } from './sources/types';
 
 export interface LibraryNotesSettings {
@@ -87,6 +89,7 @@ export class LibraryNotesSettingTab extends PluginSettingTab {
 			{ type: 'group', heading: 'Library note', items: this.libraryNoteItems() },
 			{ type: 'group', heading: 'Sources', items: this.sourceItems() },
 			{ type: 'group', heading: 'Google Books', items: this.googleBooksItems() },
+			{ type: 'group', heading: 'Hardcover', items: this.hardcoverItems() },
 		];
 	}
 
@@ -234,6 +237,43 @@ export class LibraryNotesSettingTab extends PluginSettingTab {
 				desc: 'Makes one small request to Google Books with your key.',
 				visible: () => this.plugin.getSecret(this.plugin.settings.googleBooksKeySecret) !== '',
 				action: () => void this.checkSource('google-books'),
+			},
+		];
+	}
+
+	private hardcoverItems(): SettingGroupItem<SettingKey>[] {
+		const signedIn = () => isSignedIn(this.plugin);
+		return [
+			{
+				name: 'Hardcover account',
+				desc: isSignInAvailable()
+					? 'Optional. Sign in with your free hardcover.app account to search it. Library Notes asks only to search the book catalog; it can’t see or change your account. The sign-in stays on this device. Hardcover’s API is in beta and may change; if it stops working, your other sources still work.'
+					: 'Hardcover sign-in isn’t available in this version.',
+				render: (setting) => {
+					if (!isSignInAvailable()) return;
+					if (signedIn()) {
+						setting.setName('Hardcover: signed in');
+						setting.addButton((button) =>
+							button.setButtonText('Check connection').onClick(() => void this.checkSource('hardcover')),
+						);
+						setting.addButton((button) =>
+							button.setButtonText('Sign out').onClick(async () => {
+								await signOut(this.plugin);
+								new Notice('Hardcover: signed out on this device.');
+								this.update();
+							}),
+						);
+					} else {
+						setting.addButton((button) =>
+							button
+								.setButtonText('Sign in')
+								.setCta()
+								.onClick(async () => {
+									if (await signInWithHardcover(this.plugin)) this.update();
+								}),
+						);
+					}
+				},
 			},
 		];
 	}

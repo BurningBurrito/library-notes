@@ -1,11 +1,12 @@
 import { BookError, toBookError } from '../core/errors';
 import type LibraryNotesPlugin from '../main';
 import { googleBooks } from './google-books';
+import { hardcover } from './hardcover';
 import { openLibrary } from './open-library';
 import type { BookSource, SearchResult, SourceId } from './types';
 
 /** Every source, in fallback order. */
-export const SOURCES: BookSource[] = [openLibrary, googleBooks];
+export const SOURCES: BookSource[] = [openLibrary, googleBooks, hardcover];
 
 export function getSource(id: SourceId): BookSource | undefined {
 	return SOURCES.find((source) => source.id === id);

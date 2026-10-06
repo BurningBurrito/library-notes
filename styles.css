@@ -68,3 +68,14 @@
 	font-size: var(--font-ui-smaller);
 	color: var(--text-muted);
 }
+
+/* Hardcover sign-in code */
+.library-notes-sign-in-code {
+	margin: var(--size-4-3) 0;
+	font-family: var(--font-monospace);
+	font-size: var(--font-ui-large);
+	font-weight: var(--font-bold);
+	letter-spacing: 0.1em;
+	text-align: center;
+	user-select: all;
+}

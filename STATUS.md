@@ -1,5 +1,5 @@
 # Status: Library Notes (`library-notes`)
-**Current phase:** Phase 3 — Build: Milestone 1 tested; **Milestone 2 (Google Books) built, waiting for the user's key and test**
+**Current phase:** Phase 3 — Build: Milestones 1–3 built; **waiting for the user's Hardcover account and app registration** (client ID)
 **Last updated:** 2026-10-05
 
 ## Done
@@ -107,16 +107,42 @@
     next; offline → no fallback; nothing anywhere → one message); name matching; file names
   - developer check: Google Books search + details with the user's key, writing only parsed fields
 
+- [x] Milestone 2 live test **skipped at the user's request** (2026-10-06: "assume it works"; the Google Books test
+      goes on the future list). Not verified in Obsidian: Google Books with a real key (real-data parsing, cover
+      sizes, source buttons, fallback notice), and the two Milestone 1 fixes in the app. Logic is smoke-tested
+- [x] Milestone 3 (Sign in with Hardcover), local commit:
+  - checked first: discovery document (device, token with refresh_token, revoke endpoints; `read:catalog:search`
+    scope); `books` schema fields (title, subtitle, description, pages, release_date/year, slug, image.url,
+    contributions.author.name, default_physical_edition isbn/publisher); Obsidian's keychain stores secrets
+    encrypted with the OS (Electron safeStorage) in app storage, **not in vault files**, so it never syncs:
+    each device signs in on its own (required: Hardcover revokes a renewal token that's used twice)
+  - `src/sources/hardcover/` (isolated): auth (device flow, tokens in one keychain entry, renewal 5 min early,
+    one renewal at a time, no automatic retry of a renewal, sign out = revoke + forget), GraphQL client (401 →
+    renew once and retry; plain messages for missing scope, 408, 429, GraphQL errors = "API may have changed"),
+    source (search → ids, then documented `books` fields; genres read from search results only if present;
+    date, pages, ISBN, publisher from the same edition)
+  - sign-in window (code, open link, copy code, waits, closes when approved, cancel stops polling); settings:
+    Sign in / Check connection / Sign out
+  - `HARDCOVER_CLIENT_ID` is empty until the user registers the app; until then the settings say sign-in isn't
+    available and Hardcover never appears as a source
+  - smoke-tested with simulated answers (renewal, concurrent renewal, rejected renewal, 401 retry, schema
+    change, rate limit, missing scope, result order and mapping, device-flow polling, denial, cancel, sign out)
+    and one real call (device endpoint without a client ID → "invalid_client")
+  - sentence-case lint: reworded strings rather than adding brand exceptions (Obsidian's review uses defaults)
+
 ## In progress
-- [ ] User: get a free Google Books API key, add it in settings, test Milestone 2 (steps in chat); also re-test
-      the two fixes (capitals of `LIbrary MOC`, Dirk Gently duplicate)
+- [ ] User: create a free Hardcover account and register the developer app (steps in chat), then send the
+      client ID (public, not a secret)
+- [ ] Then: put the client ID in `HARDCOVER_CLIENT_ID`, user signs in and searches in the test vault
 - [ ] Next run of the developer checks should show 31/31 (check-only fix)
 
 ## Next
-- [ ] Phase 3 Milestone 3: Sign in with Hardcover (user creates a free Hardcover account first)
+- [ ] Phase 4 pre-release check (proposed; user may decline): one Google Books search with a real key, since 1.0
+      ships Google Books
 - [ ] Phase 4: test · Phase 5: GitHub repo · Phase 6: release and submission
 
 ## Future releases (not in 1.0)
+- [ ] Google Books live test in Obsidian with a real key (user, 2026-10-06: skipped for now, "assume it works")
 - [ ] Optional "choose an edition" step after picking a book (user, 2026-10-05)
 - [ ] Contact email in the Open Library User-Agent, from a dedicated address (user, 2026-10-05). Allows 3 req/s
       instead of 1 and lets Open Library reach the developer. One-line change
