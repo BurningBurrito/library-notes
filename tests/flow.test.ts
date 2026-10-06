@@ -17,7 +17,7 @@ const notesIn = (folder: string) => [...app.files.keys()].filter((p) => p.starts
 const coversIn = (folder: string) => [...app.files.keys()].filter((p) => p.startsWith(`${folder}/`) && !p.endsWith('.md'));
 
 describe('creating a book note (recorded Open Library answers)', () => {
-	before(() => setUserAgent('LibraryNotes/test (+https://github.com/BurningBurrito/obsidian-library-notes)'));
+	before(() => setUserAgent('LibraryNotes/test (+https://github.com/BurningBurrito/library-notes)'));
 	beforeEach(() => {
 		clearCache();
 		resetNetwork();

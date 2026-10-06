@@ -127,7 +127,7 @@ All checked on 2026-10-05 against the 8,445 listed plugins **and** the 175 remov
 
 | # | Name | ID | Repo | Why |
 | --- | --- | --- | --- | --- |
-| 1 | **Library Notes** ✅ *chosen* | `library-notes` | `obsidian-library-notes` | Matches "Dictionary Notes"; it maintains a library (folder + MOC), not just search |
+| 1 | **Library Notes** ✅ *chosen* | `library-notes` | `library-notes` (chosen 2026-10-06; proposed `obsidian-library-notes`) | Matches "Dictionary Notes"; it maintains a library (folder + MOC), not just search |
 | 2 | Bookshelf Notes | `bookshelf-notes` | `obsidian-bookshelf-notes` | Friendly; but "Bookshelf" and "Bookshelf Base" exist, so possible confusion |
 | 3 | Book Library Notes | `book-library-notes` | `obsidian-book-library-notes` | Most explicit; longer |
 

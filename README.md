@@ -28,7 +28,7 @@ Requires Obsidian 1.13.0 or later. The library table needs the [Dataview](https:
 
 ### Manually
 
-1. Download `main.js`, `manifest.json`, and `styles.css` from the [latest release](https://github.com/BurningBurrito/obsidian-library-notes/releases/latest).
+1. Download `main.js`, `manifest.json`, and `styles.css` from the [latest release](https://github.com/BurningBurrito/library-notes/releases/latest).
 2. In your vault folder, create the folder `.obsidian/plugins/library-notes/` and copy the three files into it.
 3. Reload Obsidian, then enable **Library Notes** in **Settings → Community plugins**.
 

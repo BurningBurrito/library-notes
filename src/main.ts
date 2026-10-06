@@ -13,7 +13,7 @@ export default class LibraryNotesPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 		// No contact email for now (see README "Network use"); the repo link identifies the plugin.
-		setUserAgent(`LibraryNotes/${this.manifest.version} (+https://github.com/BurningBurrito/obsidian-library-notes)`);
+		setUserAgent(`LibraryNotes/${this.manifest.version} (+https://github.com/BurningBurrito/library-notes)`);
 
 		this.addCommand({
 			id: 'create-book-note',

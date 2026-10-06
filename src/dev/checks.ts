@@ -7,7 +7,7 @@ import { googleBooks } from '../sources/google-books';
 // (DESIGN.md §2). Run "Run developer checks" in the test vault; results are
 // written to a note. Included only in dev builds (see DEV_BUILD in main.ts).
 
-const USER_AGENT = 'LibraryNotes/dev-check (+https://github.com/BurningBurrito/obsidian-library-notes)';
+const USER_AGENT = 'LibraryNotes/dev-check (+https://github.com/BurningBurrito/library-notes)';
 const RESULTS_PATH = 'Checks/Developer check results.md';
 const COVER_TABLE_PATH = 'Checks/Cover table.md';
 const ECHO_SERVICES = ['https://httpbin.org/headers', 'https://postman-echo.com/headers'];

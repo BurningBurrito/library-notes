@@ -188,8 +188,10 @@ Dataview-off notice; the duplicate window on screen; offline message on screen; 
       clean (files and all commits); gitleaks 8.30.1 (checksum verified): no leaks in 8 commits or the working tree
 
 ## In progress
-- [ ] User: confirm repo name `obsidian-library-notes`, public/private, and whether DESIGN.md/STATUS.md are
-      published; then approve creating the repo and pushing `main`
+- [x] User decisions (2026-10-06): repo **`BurningBurrito/library-notes`** (not `obsidian-library-notes`),
+      **public**, DESIGN.md and STATUS.md **published**, create the repo and push `main`. Repo URL updated in
+      README, the User-Agent, developer checks, and tests
+- [ ] Security check before the push (user asked: no API keys or similar may be pushed), then create + push
 - [ ] Next run of the developer checks should show 31/31 (check-only fix)
 
 ## Next
