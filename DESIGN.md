@@ -1,6 +1,7 @@
 # Design proposal: book search plugin (Phase 1)
 
-Status: **approved 2026-10-05**; all decisions answered (see §11). Items marked *(test in Phase 2)* were checked by reading source code
+Status: **approved 2026-10-05**; all decisions answered (see §11). **Changed 2026-10-06:** Hardcover moved to a
+future release (kept on branch `feature/hardcover`); 1.0 has Open Library and Google Books. Items marked *(test in Phase 2)* were checked by reading source code
 and will be confirmed in the test vault before any code depends on them.
 
 ---
@@ -443,7 +444,7 @@ missing (built-in used) · Dataview missing (MOC notice).
 | Q3 | Keep **AudioBook / EBook** columns; template default `N/A` |
 | Q4 | New notes use **`publishDate`, `pageCount`, `isbn`** |
 | Q5 | **`read`** true/false; table ignores old `Status` |
-| Q6 | Hardcover in 1.0 via **"Sign in with Hardcover"** (device flow); user creates a free account before that milestone |
+| Q6 | Hardcover via **"Sign in with Hardcover"** (device flow). Built, then **moved to a future release** (2026-10-06) |
 | Q7 | Default MOC name **`Library MOC`** |
 | Q8 | `localCover` stored as **`"[[…]]"`** |
 | Q9 | Best-matching edition automatically in 1.0; **"choose an edition" step in a future release** |

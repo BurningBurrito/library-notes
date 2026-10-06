@@ -1,7 +1,7 @@
 import type { ThrottleRule } from '../core/throttle';
 import type LibraryNotesPlugin from '../main';
 
-export type SourceId = 'open-library' | 'google-books' | 'hardcover';
+export type SourceId = 'open-library' | 'google-books';
 
 /** Everything a source knows about one book, in one shape for all sources. */
 export interface Book {

@@ -1,5 +1,5 @@
 # Status: Library Notes (`library-notes`)
-**Current phase:** Phase 3 — Build: Milestones 1–3 built; **waiting for the user's Hardcover account and app registration** (client ID)
+**Current phase:** Phase 3 — Build: **complete** (1.0 = Open Library + Google Books); next: Phase 4 — Test
 **Last updated:** 2026-10-05
 
 ## Done
@@ -130,10 +130,13 @@
     and one real call (device endpoint without a client ID → "invalid_client")
   - sentence-case lint: reworded strings rather than adding brand exceptions (Obsidian's review uses defaults)
 
+- [x] **Hardcover moved to a future release** (user, 2026-10-06: "skip this too, we'll add it to a future
+      release"). The finished work is kept on the local branch **`feature/hardcover`** (commit 6367a5d); `main`
+      reverts its code (1.0 has no Hardcover code; release main.js back to 35,897 bytes). The branch only needs
+      the app's client ID and a sign-in test
+
 ## In progress
-- [ ] User: create a free Hardcover account and register the developer app (steps in chat), then send the
-      client ID (public, not a secret)
-- [ ] Then: put the client ID in `HARDCOVER_CLIENT_ID`, user signs in and searches in the test vault
+- [ ] Phase 4: automated test suite (offline, recorded responses), then the manual test list
 - [ ] Next run of the developer checks should show 31/31 (check-only fix)
 
 ## Next
@@ -142,6 +145,11 @@
 - [ ] Phase 4: test · Phase 5: GitHub repo · Phase 6: release and submission
 
 ## Future releases (not in 1.0)
+- [ ] **Sign in with Hardcover** — code done on branch `feature/hardcover` (commit 6367a5d, also in `main`'s
+      history; bring it back by reverting the commit "Leave Hardcover out of 1.0"). To finish: user creates a free
+      Hardcover account, registers the app at hardcover.app/account/developer-apps/new (type "Mobile, desktop,
+      or CLI", name "Library Notes", scope `read:catalog:search` only, Device Authorization Grant on, no
+      redirect URIs), sends the client ID; set `HARDCOVER_CLIENT_ID`; test sign-in, search, sign out; README
 - [ ] Google Books live test in Obsidian with a real key (user, 2026-10-06: skipped for now, "assume it works")
 - [ ] Optional "choose an edition" step after picking a book (user, 2026-10-05)
 - [ ] Contact email in the Open Library User-Agent, from a dedicated address (user, 2026-10-05). Allows 3 req/s
@@ -156,8 +164,8 @@
 - Best-matching edition automatically in 1.0 (user)
 - **No contact email for now** (user): User-Agent = plugin name + repo URL; Open Library treated as
   unidentified, so requests are spaced 1 s apart
-- **Hardcover in 1.0 via "Sign in with Hardcover"** (OAuth device flow, scope `read:catalog:search`) (user).
-  User creates a free Hardcover account before that milestone and registers the developer app
+- Hardcover via "Sign in with Hardcover" (OAuth device flow, scope `read:catalog:search`) (user); built, then
+  **moved to a future release** (user, 2026-10-06), kept on branch `feature/hardcover`
 - Write all code fresh; reuse only Dictionary Notes code (user's own). Why: Obsidian's fork policy
 - Covers by Open Library **Cover ID** with `?default=false`, plus image validation
 - Book URL goes in a new `sourceUrl` property. Why: the user's `link` property is a back-link to the MOC
@@ -166,8 +174,7 @@
 - Docs use generic examples ("Book Title"), not titles from the user's library. Why: the repo will be public
 
 ## Open questions / blockers
-- Phase 4: testing Google Books needs a free Google Cloud API key; Hardcover needs the user's account
+- Phase 4: testing Google Books needs a free Google Cloud API key
 - Before Phase 5 push: confirm DESIGN.md and STATUS.md may be public (they describe the user's folder and
   property names, no personal data)
 - Risk: mobile not testable here (isDesktopOnly will be false)
-- Risk: Hardcover API is in beta and changes often (isolated module, defensive parsing)
