@@ -1,5 +1,5 @@
 # Status: Library Notes (`library-notes`)
-**Current phase:** Phase 5 — GitHub repo: **complete** (public repo, `main` pushed, CI green); next: Phase 6 — release and submission
+**Current phase:** Phase 6 — Release and submission: **1.0.0 draft verified; waiting for the user to approve publishing**, then submission (user submits)
 **Last updated:** 2026-10-05
 
 ## Done
@@ -205,12 +205,34 @@ Dataview-off notice; the duplicate window on screen; offline message on screen; 
 - [x] Pushed `main` only (11 commits, 0 attribution lines; `feature/hardcover` stays local). CI run 37415679693
       on c8889af: **success** on Node 22 and 24 (build, lint, 67 tests, lint without moment types)
 
+### Phase 6 — Release and submission
+- [x] Re-checked the docs on GitHub (2026-10-06): obsidian-developer-docs latest commit c56c7e7 (2026-08-10); release
+      and submission pages last changed 2026-08-07, unchanged since Phase 1. obsidian-releases has no
+      validate-plugin-entry workflow any more (only mirror-community-json, plugin-stat): submission is via
+      community.obsidian.md. Process: sign in with an Obsidian account → connect GitHub → Plugins → New plugin
+      (repo URL, owner, agree to the developer policies and to keep supporting it) → automated review (manifest,
+      release assets, source code, build verification) → Edit listing (icon, short/long description,
+      categories, payment type, screenshots 1200×800)
+- [x] minAppVersion 1.13.0 confirmed: newest API used is @since 1.13.0 (setDestructive, declarative settings)
+- [x] ID `library-notes` and name still free (8,447 listed, 175 removed)
+- [x] Version **1.0.0** (user): `npm version 1.0.0` → commit 1f4ff38 "Release 1.0.0" (package, lock, manifest,
+      versions.json `"1.0.0": "1.13.0"`), annotated tag `1.0.0` (noreply tagger); 0 attribution lines
+- [x] Local release build after `npm ci` (for comparison): main.js 35,937 bytes, sha256 be2c0ab9…; 67/67 tests
+- [x] Pushed main and tag 1.0.0 (user approved). Release workflow run 37416075548: **success** (tag = manifest
+      check, build, attestation, draft)
+- [x] Draft verified: 3 assets (main.js 35,937 / manifest.json 361 / styles.css 1,630 bytes), **all
+      byte-identical to the local build**; manifest = tag's manifest (1.0.0, minAppVersion 1.13.0); attestation
+      verified: main.js + styles.css digests match, signed by release.yml@refs/tags/1.0.0, commit 1f4ff38,
+      github-hosted runner
+- [x] Requirements check: description 135 chars, ends with a period, no emoji; no fundingUrl; isDesktopOnly false
+      (no Node/Electron APIs in the build); command IDs without the plugin ID; no sample code; README + LICENSE
+
 ## In progress
-- [ ] Phase 6: re-check the submission process, choose the version (1.0.0 proposed), tag, draft release, verify,
-      publish (user approval), prepare the submission and stop before submitting
+- [ ] User: approve publishing the 1.0.0 release (notes drafted in chat)
+- [ ] User: submit at community.obsidian.md (package prepared in chat); then read the automated review
 
 ## Next
-- [ ] Phase 6: release and community submission
+- [ ] After submission: fix anything the automated review flags (new patch release), then Edit listing
 
 ## Future releases (not in 1.0)
 - [ ] **Sign in with Hardcover** — code done on branch `feature/hardcover` (commit 6367a5d, also in `main`'s
