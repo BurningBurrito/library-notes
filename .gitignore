@@ -1,0 +1,33 @@
+# vscode
+.vscode
+
+# Intellij
+*.iml
+.idea
+
+# npm
+node_modules
+
+# Don't include the compiled main.js file in the repo.
+# They should be uploaded to GitHub releases instead.
+main.js
+
+# Exclude sourcemaps
+*.map
+
+# obsidian
+data.json
+# Vault config, if the project folder itself is ever opened as a vault
+/.obsidian/
+
+# Local test vault (holds plugin settings, copies of real notes, possibly keys — never commit)
+test-vault/
+
+# Bundled tests (npm test)
+tests/.build/
+
+# Local Claude Code settings
+.claude/
+
+# Exclude macOS Finder (System Explorer) View States
+.DS_Store

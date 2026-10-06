@@ -1,0 +1,10 @@
+{
+	"id": "library-notes",
+	"name": "Library Notes",
+	"version": "0.1.0",
+	"minAppVersion": "1.13.0",
+	"description": "Search for books, save each one as a note with its cover, and keep a library overview note. Works with Open Library without an API key.",
+	"author": "BurningBurrito",
+	"authorUrl": "https://github.com/BurningBurrito",
+	"isDesktopOnly": false
+}
