@@ -1,6 +1,6 @@
 # Status: Library Notes (`library-notes`)
 **Current phase:** Phase 6 — Release and submission: **1.0.0 published; submitted** (waiting for the directory's re-scan)
-**Last updated:** 2026-10-05
+**Last updated:** 2026-10-06
 
 ## Done
 
@@ -234,6 +234,10 @@ Dataview-off notice; the duplicate window on screen; offline message on screen; 
       outside: public latest-release API = tag 1.0.0 (not draft/pre-release; a first check hit GitHub's 60 s
       cache of the earlier 404); public download URLs for main.js, manifest.json, styles.css return 200 and are
       byte-identical to the local build
+- [x] Portfolio card on tonyherrera.org (2026-10-06, TonyHerreraWebsite 82d9368): placed after Dictionary
+      Notes, with a sample of the library table (The Hobbit, Project Hail Mary, Dune, from the test recordings).
+      Status line says "Released · Obsidian directory review pending"; "Get the Plugin" links to the GitHub
+      release until the plugin is listed
 
 ## In progress
 - [ ] User: on community.obsidian.md, open the entry → **⋯ → Check for new releases** (or **Request review**) so the
@@ -242,6 +246,8 @@ Dataview-off notice; the duplicate window on screen; offline message on screen; 
 
 ## Next
 - [ ] After submission: fix anything the automated review flags (new patch release), then Edit listing
+- [ ] Once listed (in obsidianmd/obsidian-releases `community-plugins.json`): update the tonyherrera.org card to
+      link to community.obsidian.md/plugins/library-notes and drop "review pending" (in that repo's STATUS.md)
 
 ## Future releases (not in 1.0)
 - [ ] **Sign in with Hardcover** — code done on branch `feature/hardcover` (commit 6367a5d, also in `main`'s
