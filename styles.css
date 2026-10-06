@@ -1,1 +1,22 @@
 /* Library Notes styles. Use Obsidian CSS variables so themes apply. */
+
+/* The library note (cssclasses: library-notes-moc) uses the full width of its
+   pane, whatever "Readable line length" is set to, so the book table fits
+   without scrolling sideways. Applies in reading view and Live Preview. */
+.markdown-preview-view.library-notes-moc,
+.markdown-source-view.library-notes-moc {
+	--file-line-width: 100%;
+}
+
+/* A cover whose image file is missing. Dataview draws found covers as <img>;
+   a missing one falls back to an embed that shows its width label ("80").
+   Hide it so the cell is simply empty. */
+.library-notes-moc .table-view-table .internal-embed:is(
+		[src$='.jpg' i],
+		[src$='.jpeg' i],
+		[src$='.png' i],
+		[src$='.webp' i],
+		[src$='.gif' i]
+	) {
+	display: none;
+}

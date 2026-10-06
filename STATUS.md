@@ -1,6 +1,6 @@
 # Status: Library Notes (`library-notes`)
-**Current phase:** Phase 2 — Scaffold: built and committed locally; **waiting for the user to run the
-developer checks in the test vault**
+**Current phase:** Phase 2 — Scaffold: **complete** (one check-only fix to confirm on the next run);
+next: Phase 3
 **Last updated:** 2026-10-05
 
 ## Done
@@ -37,10 +37,32 @@ developer checks in the test vault**
       cover found/missing through requestUrl, Dataview table inspected row by row (image loaded? rows dropped?)
 - [x] git: local repo, identity = GitHub noreply address (as in Dictionary Notes), first commit (local only)
 
+- [x] First run of the developer checks (user, 2026-10-05 21:23): **15/15 passed**. Custom User-Agent arrives
+      unchanged at httpbin.org (default would be Chrome/Electron with `obsidian/1.13.7`); Open Library cover via
+      archive.org redirect = 200, image/jpeg, 46,167 bytes, real JPEG; missing cover = 404; all old-style
+      covers render (`/Title.jpg`, `/Assets/Title.jpg`), new `[[…]]`, `![[…]]`, `|alias`; 10/10 rows (none dropped)
+- [x] User feedback from that run: (1) the missing-image row shows "80"; (2) the table is wider than the note
+      and needs sideways scrolling. Cause (1): Dataview falls back to the embed `![[…|80]]` when the file is
+      missing; Obsidian shows its label. Cause (2): Obsidian's readable line length (`--file-line-width`, 700px)
+- [x] Fix: MOC note gets `cssclasses: library-notes-moc`; `styles.css` makes it full pane width and hides image
+      embeds in its Dataview tables (found covers are `<img>`, so only missing ones are hidden). Developer check
+      now also measures table vs pane width and the visible text in no-cover cells. DESIGN.md §7 updated
+
+- [x] Second run (21:46): "80" still reported and "table fits" passed at 0px width. Both were **check bugs**: the
+      check measured the hidden editor copy of the table (a note's tab renders Dataview in both views; on hidden
+      elements `innerText` ignores CSS). Check rewritten to inspect reading view and Live Preview separately and
+      only tables on screen
+- [x] Third run (user, 2026-10-05 21:52): **30/31 passed** in both views. Missing-cover cell empty; table 1500px in
+      a 1576px pane (normal limit 700px), no sideways scrolling; 10/10 rows; all covers. The one ❌ ("class
+      missing", reading view) was the check looking at the wrapper instead of `.markdown-preview-view` (the
+      1500px width proves the class works). Check fixed (21:55); confirm 31/31 on the next run
+- [x] User: "the cover table looks amazing" — this is the table the Library MOC will get
+- [x] User asked whether their existing MOC (copy in the test vault, old query) will change: designed
+      "Regenerate library note" for hand-made MOCs (DESIGN.md §7): replaces their single Dataview table on
+      confirmation, keeps properties/banner/text, adds the full-width class
+
 ## In progress
-- [ ] User: open `test-vault` in Obsidian, trust the vault, run **Run developer checks (dev build only)**
-- [ ] Read `Checks/Developer check results.md` and confirm: custom User-Agent arrives, covers OK, every row
-      has the expected cover
+- [ ] Next run of the developer checks should show 31/31 (check-only fix)
 
 ## Next
 - [ ] Phase 3: build the approved design (milestones: core + Open Library → notes/covers/MOC/read toggle →

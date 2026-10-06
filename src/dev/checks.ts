@@ -121,8 +121,9 @@ function header(response: RequestUrlResponse, name: string): string {
 	return key === undefined ? '(none)' : (response.headers[key] ?? '(none)');
 }
 
-// 3. The proposed Library MOC query, rendered by Dataview: which rows show a
-//    cover image, and does every note get a row?
+// 3. The proposed Library MOC query, rendered by Dataview, in reading view and
+//    in Live Preview: which rows show a cover, is a missing cover's cell empty,
+//    does every note get a row, and does the table fit without scrolling sideways?
 async function coverTableChecks(app: App): Promise<Result[]> {
 	const dataview = isPluginEnabled(app, 'dataview');
 	const file = app.vault.getFileByPath(COVER_TABLE_PATH);
@@ -130,12 +131,34 @@ async function coverTableChecks(app: App): Promise<Result[]> {
 
 	const leaf = app.workspace.getLeaf('tab');
 	await leaf.openFile(file, { state: { mode: 'preview' } });
-	const view = leaf.view;
-	if (!(view instanceof MarkdownView)) return [fail('Dataview cover table', 'opens in reading view', 'did not')];
+	const reading = leaf.view;
+	if (!(reading instanceof MarkdownView)) return [fail('Dataview cover table', 'opens as a note', 'did not')];
+	// A note's tab holds both a reading view and an editor, and Dataview renders the
+	// table in each. Inspect each view's own table, never the hidden one.
+	const results = await inspectTable('Reading view', reading.previewMode.containerEl, dataview);
 
-	const table = await waitFor(() => view.containerEl.querySelector('table.table-view-table'), 15_000);
+	await leaf.setViewState({ type: 'markdown', state: { file: file.path, mode: 'source', source: false } });
+	const editing = leaf.view;
+	const sourceEl = editing instanceof MarkdownView ? editing.contentEl.querySelector<HTMLElement>('.markdown-source-view') : null;
+	if (sourceEl) results.push(...(await inspectTable('Live Preview', sourceEl, dataview)));
+	else results.push(fail('Live Preview', 'editor found', 'no editor'));
+
+	// Leave the note in reading view for a look by eye.
+	await leaf.setViewState({ type: 'markdown', state: { file: file.path, mode: 'preview' } });
+	return results;
+}
+
+async function inspectTable(mode: string, viewEl: HTMLElement, dataview: boolean): Promise<Result[]> {
+	// Only a table that is actually on screen (has a width) counts.
+	const table = await waitFor(
+		() =>
+			Array.from(viewEl.querySelectorAll<HTMLTableElement>('table.table-view-table')).find(
+				(t) => t.getBoundingClientRect().width > 0,
+			),
+		15_000,
+	);
 	if (!table) {
-		return [fail('Dataview cover table', 'table rendered', `no table (Dataview enabled: ${dataview ? 'yes' : 'no'})`)];
+		return [fail(`${mode}: Dataview table`, 'visible table', `none (Dataview enabled: ${dataview ? 'yes' : 'no'})`)];
 	}
 	// Give the cover images time to load.
 	await waitFor(() => Array.from(table.querySelectorAll('img')).every((img) => img.complete) || null, 10_000);
@@ -148,26 +171,49 @@ async function coverTableChecks(app: App): Promise<Result[]> {
 		const read = cells[5]?.textContent?.trim() ?? '';
 		const img = cells[0]?.querySelector('img');
 		const loaded = !!img && img.complete && img.naturalWidth > 0;
+		// On a visible element, innerText skips hidden parts: this is what a reader sees.
+		const visibleText = cells[0]?.innerText.trim() ?? '';
 		const actual = !img
-			? 'no image'
+			? `no image${visibleText ? `, shows text "${visibleText}"` : ', cell looks empty'}`
 			: loaded
-				? `image loaded (${img.naturalWidth}×${img.naturalHeight}, shown ${img.width}px wide)`
+				? `image loaded (${img.naturalWidth}×${img.naturalHeight}, shown ${Math.round(img.getBoundingClientRect().width)}px wide)`
 				: 'image element, failed to load';
 		const expectImage = EXPECTED_ROWS[title];
 		seen.add(title);
+		const asExpected = expectImage ? loaded : !img && visibleText === '';
 		results.push({
-			check: `Cover: ${title} (read: ${read || 'empty'})`,
-			expected: expectImage === undefined ? '(not in the expected list)' : expectImage ? 'image loaded' : 'no image',
+			check: `${mode}: ${title} (read: ${read || 'empty'})`,
+			expected:
+				expectImage === undefined ? '(not in the expected list)' : expectImage ? 'image loaded' : 'no image, cell looks empty',
 			actual,
-			outcome: expectImage === undefined ? 'info' : expectImage === loaded ? 'pass' : 'fail',
+			outcome: expectImage === undefined ? 'info' : asExpected ? 'pass' : 'fail',
 		});
 	}
+
 	const missingRows = Object.keys(EXPECTED_ROWS).filter((title) => !seen.has(title));
 	results.push({
-		check: 'Every note has a row (none silently dropped)',
+		check: `${mode}: every note has a row (none silently dropped)`,
 		expected: `${Object.keys(EXPECTED_ROWS).length} rows`,
 		actual: missingRows.length ? `missing: ${missingRows.join(', ')}` : `${seen.size} rows`,
 		outcome: missingRows.length ? 'fail' : 'pass',
+	});
+
+	// Reading view puts the note's classes on .markdown-preview-view, inside the wrapper we were given.
+	const hasClass = viewEl.matches('.library-notes-moc') || viewEl.querySelector('.library-notes-moc') !== null;
+	results.push({
+		check: `${mode}: full pane width (cssclasses: library-notes-moc)`,
+		expected: 'class applied',
+		actual: hasClass ? 'class applied' : 'class missing',
+		outcome: hasClass ? 'pass' : 'fail',
+	});
+	const paneWidth = viewEl.clientWidth;
+	const tableWidth = Math.round(table.getBoundingClientRect().width);
+	const fits = tableWidth > 0 && tableWidth <= paneWidth && table.scrollWidth <= table.clientWidth + 1;
+	results.push({
+		check: `${mode}: table fits without scrolling sideways`,
+		expected: 'table width > 0 and ≤ pane width',
+		actual: `table ${tableWidth}px, pane ${paneWidth}px, table content ${table.scrollWidth}px`,
+		outcome: fits ? 'pass' : 'fail',
 	});
 	return results;
 }

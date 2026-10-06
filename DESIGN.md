@@ -335,6 +335,29 @@ Book Search compatibility aliases, so an old Book Search template mostly works: 
   Library MOC needs the Dataview plugin. Install and enable it from Community plugins."* (or "…is installed
   but turned off. Enable it in Community plugins."). The plugin never installs anything.
 
+### Full width and missing covers (added after the Phase 2 test)
+- The MOC gets `cssclasses: library-notes-moc` in its properties. The plugin's `styles.css` makes notes with that
+  class use the **full pane width** (overrides Obsidian's `--file-line-width` only there), so the table fits the
+  window instead of scrolling sideways. Your global "Readable line length" setting is unchanged. Remove the class
+  from the note to opt out.
+- A cover whose image file is missing made Dataview show the width label ("80"). The same stylesheet hides image
+  embeds inside the MOC's Dataview tables. That's safe because Dataview draws **found** covers as `<img>`; only
+  missing ones become embeds. The cell is simply empty.
+- When the plugin adds its table to an existing MOC (no markers), it also adds `library-notes-moc` to that note's
+  `cssclasses` (part of the same confirmation).
+
+### Updating a library note you made yourself (e.g. your current `LIbrary MOC.md`) — added 2026-10-05
+Nothing happens to it until you run **Regenerate library note**. The confirmation window then says exactly what
+will change:
+- If the note has **exactly one Dataview table** (as yours does), the default choice is **Replace that table**:
+  only that code block is swapped for the generated one (between markers, so later regenerations find it).
+  Properties, banner, tags, and any other text stay.
+- Otherwise: **Add the table at the end**.
+- Either way, `library-notes-moc` is added to the note's `cssclasses` (full width). **Cancel** changes nothing.
+- For your vault: set Library folder `Synced Notes/Library`, Books `All Books`, Library note name `LIbrary MOC`
+  (or rename the file to `Library MOC` yourself), then run the command once.
+- Without the plugin enabled, the table still works; it's just limited to the readable width again.
+
 ### Generated query (with default settings; FROM follows the folder settings)
 ````markdown
 %% library-notes:start (generated: "Regenerate library note" replaces only this part) %%
