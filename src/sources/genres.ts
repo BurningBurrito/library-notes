@@ -17,7 +17,7 @@ const GENRES: [RegExp, string][] = [
 	[/\bjuvenile\b|\bchildren'?s\b/i, "Children's"],
 	[/\bpoetry\b/i, 'Poetry'],
 	[/\bbiograph|\bautobiograph|\bmemoirs?\b/i, 'Biography'],
-	[/\bself[- ]?help\b|\bpersonal development\b|\bself[- ]?improvement\b/i, 'Self-help'],
+	[/\bself[- ]?help\b|\bpersonal (development|growth)\b|\bself[- ]?improvement\b/i, 'Self-help'],
 	[/\bbusiness\b|\bmanagement\b|\bentrepreneur/i, 'Business'],
 	[/\beconomics?\b/i, 'Economics'],
 	[/\bpsycholog/i, 'Psychology'],

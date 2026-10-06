@@ -8,7 +8,9 @@
 		"dev": "node esbuild.config.mjs",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
 		"version": "node version-bump.mjs && git add manifest.json versions.json",
-		"lint": "eslint ."
+		"lint": "eslint .",
+		"test": "node tests/run.mjs",
+		"test:record": "node tests/run.mjs --record"
 	},
 	"keywords": [
 		"obsidian",
@@ -30,8 +32,10 @@
 		"eslint-plugin-obsidianmd": "^0.4.0",
 		"globals": "^17.6.0",
 		"jiti": "^2.6.1",
+		"linkedom": "0.18.13",
 		"obsidian": "^1.13.1",
 		"typescript": "^5.8.3",
-		"typescript-eslint": "^8.59.1"
+		"typescript-eslint": "^8.59.1",
+		"yaml": "2.9.1"
 	}
 }

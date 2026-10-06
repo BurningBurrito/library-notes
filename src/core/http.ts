@@ -70,6 +70,11 @@ export async function httpRequest(url: string, options: RequestOptions): Promise
 
 const cache = new Map<string, { at: number; value: unknown }>();
 
+/** Forget remembered answers (when the plugin is turned off). */
+export function clearCache(): void {
+	cache.clear();
+}
+
 /**
  * GET a URL and parse its JSON. Successful answers are kept for 30 minutes,
  * so repeating a search doesn't ask the service again.

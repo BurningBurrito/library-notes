@@ -1,5 +1,5 @@
 # Status: Library Notes (`library-notes`)
-**Current phase:** Phase 3 — Build: **complete** (1.0 = Open Library + Google Books); next: Phase 4 — Test
+**Current phase:** Phase 4 — Test: **complete** (automated suite; manual tests skipped by the user); next: Phase 5 — GitHub repo
 **Last updated:** 2026-10-05
 
 ## Done
@@ -135,14 +135,51 @@
       reverts its code (1.0 has no Hardcover code; release main.js back to 35,897 bytes). The branch only needs
       the app's client ID and a sign-in test
 
+### Phase 4 — Test
+- [x] User (2026-10-06): "skip the manual stuff. assume it works". Manual test list not run; covered in the
+      automated suite as far as possible (below)
+- [x] Automated suite, `npm test`: **67 tests, all pass, offline, ~0.2 s** (esbuild bundles + Node test runner;
+      stand-ins for Obsidian, an in-memory vault with real YAML frontmatter edits, scripted windows; Open Library
+      answers recorded from the live service, `npm run test:record`). Suites:
+  - render (valid YAML for any text, lists, numbers, ISBNs as text, unknown variables kept, built-in template's
+    exact properties, Book Search variable names)
+  - notes (file names, straight apostrophes, loose name matching, subfolders, nested folder creation, file in
+    the way, library paths for nested and root folders)
+  - settings (defaults, repair of bad saved values)
+  - covers (image bytes, 404/403/placeholder GIF/HTML = no cover, 503/network/offline errors, reuse not overwrite)
+  - library (query from settings, columns, markers, regenerate: markers / single hand-made table / several /
+    dataviewjs; capitals; never overwritten; cssclasses kept and added; Dataview missing / turned off notices;
+    read toggle on books only, leaves other properties)
+  - sources (Google Books: key in header not URL, parsing, HTML descriptions, cover clean-up, genres, Google's
+    real error answers; fallback: fails → next with reason, empty → next, fallback off, offline, nothing
+    anywhere, unconfigured default; cache answers recent searches offline)
+  - open-library (recorded: search + User-Agent + language, cover's edition not large print, ISBN = exact
+    edition, genres by mentions, nonsense = none, 503; date/ISBN/description/genre clean-up)
+  - flow (recorded, whole create-note path: note + cover + library note + open; ISBN skips list; duplicates:
+    open existing / create copy (cover reused) / cancel; curly vs straight apostrophe; subfolder + capitals;
+    nested library folder with existing `LIbrary MOC` unchanged; no cover / failed download; details failure;
+    custom and missing template; offline and no results shown in the search window)
+- [x] Deliberate breakage of 12 behaviors: 11 caught. Missed: "fall back even when offline" (equivalent: every
+      source checks the connection first, same message, no requests). First run also missed "duplicate check
+      by exact name" → added the subfolder/capitals test, now caught
+- [x] Found by the tests: the 30-minute cache made two tests pass for the wrong reason → `clearCache()` (also
+      called when the plugin is turned off) and cleared before each test; "Personal Growth" now counts as Self-help
+- [x] Fixtures: 22 Open Library responses (2 hosts), no personal data (scan matched only base64 image bytes)
+- [x] `npm audit`: 3 moderate in `moment` via the `obsidian` types / lint plugin (dev only, not bundled; Obsidian
+      provides moment). `npm audit fix --force` would downgrade the Obsidian API to 0.14.5: not applied
+- [x] build, lint, lint without moment types: clean; release main.js 35,946 bytes, no developer or test code
+
+**Never checked in the running Obsidian app** (manual tests skipped; logic covered by the automated suite):
+Google Books with a real key; source buttons with two sources; fallback notice on screen; settings page after
+Milestone 2 (Google Books section, key field, check button); Regenerate on the copy of the user's MOC; the
+Dataview-off notice; the duplicate window on screen; offline message on screen; mobile (isDesktopOnly false)
+
 ## In progress
-- [ ] Phase 4: automated test suite (offline, recorded responses), then the manual test list
+- [ ] Phase 5: confirm repo name and visibility with the user, README, release workflow, first push
 - [ ] Next run of the developer checks should show 31/31 (check-only fix)
 
 ## Next
-- [ ] Phase 4 pre-release check (proposed; user may decline): one Google Books search with a real key, since 1.0
-      ships Google Books
-- [ ] Phase 4: test · Phase 5: GitHub repo · Phase 6: release and submission
+- [ ] Phase 5: GitHub repo · Phase 6: release and submission
 
 ## Future releases (not in 1.0)
 - [ ] **Sign in with Hardcover** — code done on branch `feature/hardcover` (commit 6367a5d, also in `main`'s

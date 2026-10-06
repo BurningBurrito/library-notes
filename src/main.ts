@@ -1,7 +1,7 @@
 import { Notice, Plugin } from 'obsidian';
 import { createBookNote } from './books/create-book-note';
 import { toBookError } from './core/errors';
-import { setUserAgent } from './core/http';
+import { clearCache, setUserAgent } from './core/http';
 import { registerDevChecks } from './dev/checks';
 import { regenerateLibraryNote } from './library/moc';
 import { isBookNote, toggleRead } from './library/read-status';
@@ -46,6 +46,10 @@ export default class LibraryNotesPlugin extends Plugin {
 
 		// Developer checks exist only in `npm run dev` builds; release builds drop this code.
 		if (DEV_BUILD) registerDevChecks(this);
+	}
+
+	onunload() {
+		clearCache();
 	}
 
 	/** A secret from Obsidian's keychain (settings store only its name), or "" if not set. */
