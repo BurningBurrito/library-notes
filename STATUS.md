@@ -1,5 +1,5 @@
 # Status: Library Notes (`library-notes`)
-**Current phase:** Phase 4 — Test: **complete** (automated suite; manual tests skipped by the user); next: Phase 5 — GitHub repo
+**Current phase:** Phase 5 — GitHub repo: README written, scans clean; **waiting for the user to confirm repo name, visibility, and the first push**
 **Last updated:** 2026-10-05
 
 ## Done
@@ -174,8 +174,22 @@ Google Books with a real key; source buttons with two sources; fallback notice o
 Milestone 2 (Google Books section, key field, check button); Regenerate on the copy of the user's MOC; the
 Dataview-off notice; the duplicate window on screen; offline message on screen; mobile (isDesktopOnly false)
 
+### Phase 5 — GitHub repo
+- [x] Already in place from Phase 2: LICENSE (MIT), .gitignore (test-vault, .claude, node_modules, main.js),
+      release.yml (tag = manifest version, build, attestation on public repos, **draft** release with main.js,
+      manifest.json, styles.css), lint.yml (Node 22/24: build, lint, `npm test`, lint without moment types)
+- [x] README written for directory visitors: features, installation, usage, which edition, folder structure,
+      library note + Dataview requirement + generated query + regenerating, settings, Google Books API key steps,
+      template variables + built-in template, coming from Book Search, network use and privacy (required
+      disclosure: services, what's sent, account needed for Google Books), content and licensing, troubleshooting,
+      development, releasing, credits (Book Search inspiration, no code; sample plugin; Open Library; Google Books;
+      Dataview). Every setting name, command name, and quoted message checked against the code; no placeholders
+- [x] Before the first push: git history has no attribution lines (0); pattern scan for personal data and keys
+      clean (files and all commits); gitleaks 8.30.1 (checksum verified): no leaks in 8 commits or the working tree
+
 ## In progress
-- [ ] Phase 5: confirm repo name and visibility with the user, README, release workflow, first push
+- [ ] User: confirm repo name `obsidian-library-notes`, public/private, and whether DESIGN.md/STATUS.md are
+      published; then approve creating the repo and pushing `main`
 - [ ] Next run of the developer checks should show 31/31 (check-only fix)
 
 ## Next
