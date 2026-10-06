@@ -1,5 +1,5 @@
 # Status: Library Notes (`library-notes`)
-**Current phase:** Phase 5 — GitHub repo: README written, scans clean; **waiting for the user to confirm repo name, visibility, and the first push**
+**Current phase:** Phase 5 — GitHub repo: **complete** (public repo, `main` pushed, CI green); next: Phase 6 — release and submission
 **Last updated:** 2026-10-05
 
 ## Done
@@ -186,8 +186,6 @@ Dataview-off notice; the duplicate window on screen; offline message on screen; 
       Dataview). Every setting name, command name, and quoted message checked against the code; no placeholders
 - [x] Before the first push: git history has no attribution lines (0); pattern scan for personal data and keys
       clean (files and all commits); gitleaks 8.30.1 (checksum verified): no leaks in 8 commits or the working tree
-
-## In progress
 - [x] User decisions (2026-10-06): repo **`BurningBurrito/library-notes`** (not `obsidian-library-notes`),
       **public**, DESIGN.md and STATUS.md **published**, create the repo and push `main`. Repo URL updated in
       README, the User-Agent, developer checks, and tests
@@ -202,11 +200,17 @@ Dataview-off notice; the duplicate window on screen; offline message on screen; 
     node_modules, only `obsidian` external; no developer-check code (26 bytes = an import line, no strings)
   - CI: release.yml runs on tags only with the built-in token; lint.yml now declares read-only permissions
   - `npm audit`: moment (dev only, not bundled), as before
-- [ ] Create the repo and push `main`
-- [ ] Next run of the developer checks should show 31/31 (check-only fix)
+- [x] Created **https://github.com/BurningBurrito/library-notes** (public; description = manifest description; topics
+      obsidian, obsidian-plugin, obsidian-md, books, book-notes, open-library, google-books, dataview, reading-list)
+- [x] Pushed `main` only (11 commits, 0 attribution lines; `feature/hardcover` stays local). CI run 37415679693
+      on c8889af: **success** on Node 22 and 24 (build, lint, 67 tests, lint without moment types)
+
+## In progress
+- [ ] Phase 6: re-check the submission process, choose the version (1.0.0 proposed), tag, draft release, verify,
+      publish (user approval), prepare the submission and stop before submitting
 
 ## Next
-- [ ] Phase 5: GitHub repo · Phase 6: release and submission
+- [ ] Phase 6: release and community submission
 
 ## Future releases (not in 1.0)
 - [ ] **Sign in with Hardcover** — code done on branch `feature/hardcover` (commit 6367a5d, also in `main`'s
@@ -238,6 +242,8 @@ Dataview-off notice; the duplicate window on screen; offline message on screen; 
 - Docs use generic examples ("Book Title"), not titles from the user's library. Why: the repo will be public
 
 ## Open questions / blockers
+- Minor (development tool only): the developer checks were last run at 30/31; the one ❌ was fixed in the check
+  itself (21:55, 2026-10-05) and hasn't been re-run since
 - Phase 4: testing Google Books needs a free Google Cloud API key
 - Before Phase 5 push: confirm DESIGN.md and STATUS.md may be public (they describe the user's folder and
   property names, no personal data)
