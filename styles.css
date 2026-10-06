@@ -20,3 +20,51 @@
 	) {
 	display: none;
 }
+
+/* Search window */
+.library-notes-search-input {
+	width: 100%;
+}
+
+.library-notes-modes {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--size-4-2);
+	margin-bottom: var(--size-4-3);
+}
+
+.library-notes-message {
+	margin-top: var(--size-4-2);
+	color: var(--text-muted);
+}
+
+.library-notes-message.is-error {
+	color: var(--text-error);
+}
+
+/* Search results: cover thumbnail, title, details */
+.library-notes-result {
+	display: flex;
+	align-items: center;
+	gap: var(--size-4-3);
+}
+
+.library-notes-result-cover {
+	flex: 0 0 auto;
+	width: 40px;
+	height: 60px;
+	border-radius: var(--radius-s);
+	background-color: var(--background-modifier-hover);
+	overflow: hidden;
+}
+
+.library-notes-result-cover img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.library-notes-result-details {
+	font-size: var(--font-ui-smaller);
+	color: var(--text-muted);
+}

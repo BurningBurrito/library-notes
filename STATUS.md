@@ -1,6 +1,5 @@
 # Status: Library Notes (`library-notes`)
-**Current phase:** Phase 2 — Scaffold: **complete** (one check-only fix to confirm on the next run);
-next: Phase 3
+**Current phase:** Phase 3 — Build: **Milestone 1 (Open Library) built, waiting for the user's test**
 **Last updated:** 2026-10-05
 
 ## Done
@@ -61,12 +60,38 @@ next: Phase 3
       "Regenerate library note" for hand-made MOCs (DESIGN.md §7): replaces their single Dataview table on
       confirmation, keeps properties/banner/text, adds the full-width class
 
+### Phase 3 — Build
+- [x] Milestone 1 (Open Library end to end), local commit:
+  - core: BookError, requestUrl wrapper (User-Agent on every request, 15 s timeout, offline/429/5xx), per-service
+    throttle (Open Library 1 request/s: no contact email), 30-min in-memory cache for searches and details,
+    template engine (numbers stay numbers, ISBNs stay text), nested folder creation, library paths from settings
+  - covers: download, accept only real image bytes > 1 KB (JPEG/PNG/WebP/GIF), save with `vault.createBinary`,
+    reuse an existing file, name `Title - ISBN-or-ID.ext`
+  - Open Library source: search (ISBN detected → exact edition), details (work: description, subjects; edition:
+    pages, date, publisher, ISBNs), description cleanup, date normalization, `?default=false` covers
+  - Fixed while smoke-testing live: keyword searches used Open Library's "best-matching" edition (Project Hail
+    Mary → a Large Print edition, 794 pages, while showing the standard cover). Now the edition that owns the
+    work's main cover (`cover_edition_key`) is used, so cover, pages, and ISBN match; ISBN searches keep the exact
+    edition. Genres ranked by how often subjects mention them (The Hobbit was "Science fiction, Fantasy,
+    Horror", now "Fantasy, Children's, Fiction")
+  - source registry + fallback order (only Open Library so far); search window (source buttons ready), results
+    with cover thumbnails, Open existing / Create copy / Cancel for duplicates
+  - library note: created on first use (never overwritten), query from folder settings, full-width class;
+    "Regenerate library note" (command + settings button) with confirmation: markers → replace block; one
+    hand-made Dataview table → replace it or add at the end; otherwise add at the end. Smoke-tested on the copy
+    of the user's MOC: plan "single-table", properties/banner kept, second run changes nothing
+  - read toggle (`checkCallback`: only in the Books folder; `processFrontMatter`)
+  - settings: folders, library note name, template + editable copy, open after create, Dataview status line,
+    regenerate, default source, fallback, language, Open Library check button
+  - build, lint, lint without moment types: clean; release main.js 29,978 bytes, no developer-check code
+
 ## In progress
+- [ ] User: test Milestone 1 in the test vault (steps given in chat)
 - [ ] Next run of the developer checks should show 31/31 (check-only fix)
 
 ## Next
-- [ ] Phase 3: build the approved design (milestones: core + Open Library → notes/covers/MOC/read toggle →
-      Google Books → Hardcover sign-in, after the user creates a free Hardcover account)
+- [ ] Phase 3 Milestone 2: Google Books (user's API key in Obsidian's keychain), source buttons, fallback test
+- [ ] Phase 3 Milestone 3: Sign in with Hardcover (user creates a free Hardcover account first)
 - [ ] Phase 4: test · Phase 5: GitHub repo · Phase 6: release and submission
 
 ## Future releases (not in 1.0)
