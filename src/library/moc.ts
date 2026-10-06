@@ -1,7 +1,7 @@
 import { Notice, TFile } from 'obsidian';
 import { dataviewMessage, dataviewStatus } from '../core/dataview';
 import { BookError } from '../core/errors';
-import { ensureFolder } from '../core/notes';
+import { ensureFolder, findNoteByName } from '../core/notes';
 import { libraryPaths } from '../core/paths';
 import type LibraryNotesPlugin from '../main';
 import { askChoice, Choice } from '../ui/choice-modal';
@@ -80,22 +80,43 @@ export function applyRegeneration(content: string, plan: RegenerationPlan, block
 	return `${content.trimEnd()}\n\n${block}\n`;
 }
 
+const toldAboutCapitals = new Set<string>();
+
 /**
- * Create the library note if it doesn't exist yet. An existing note is never
- * changed here; that only happens through "Regenerate library note".
+ * The library note, also when its name differs from the setting only in
+ * capital letters (e.g. "LIbrary MOC" vs "Library MOC"), so a second one is
+ * never created next to it.
  */
-export async function ensureLibraryNote(plugin: LibraryNotesPlugin): Promise<void> {
+export function findLibraryNote(plugin: LibraryNotesPlugin): TFile | null {
+	const paths = libraryPaths(plugin.settings);
+	const file = findNoteByName(plugin.app, paths.root, paths.libraryNoteName, false);
+	if (file && file.basename !== paths.libraryNoteName && !toldAboutCapitals.has(file.path)) {
+		toldAboutCapitals.add(file.path);
+		new Notice(
+			`Using "${file.path}" as the library note. Its name differs from the setting "${paths.libraryNoteName}" only in capital letters.`,
+			10_000,
+		);
+	}
+	return file;
+}
+
+/**
+ * The library note, created if it doesn't exist yet. An existing note is
+ * never changed here; that only happens through "Regenerate library note".
+ */
+export async function ensureLibraryNote(plugin: LibraryNotesPlugin): Promise<TFile> {
 	const { app } = plugin;
 	const paths = libraryPaths(plugin.settings);
-	const existing = app.vault.getAbstractFileByPath(paths.libraryNote);
-	if (existing instanceof TFile) return;
-	if (existing) {
+	const existing = findLibraryNote(plugin);
+	if (existing) return existing;
+	if (app.vault.getAbstractFileByPath(paths.libraryNote)) {
 		throw new BookError('config', `"${paths.libraryNote}" is a folder. Choose another library note name in the settings.`);
 	}
 	await ensureFolder(app, paths.root);
-	await app.vault.create(paths.libraryNote, newLibraryNote(paths.books));
+	const file = await app.vault.create(paths.libraryNote, newLibraryNote(paths.books));
 	new Notice(`Created the library note "${paths.libraryNote}".`);
 	warnIfNoDataview(plugin);
+	return file;
 }
 
 type RegenerateChoice = 'regenerate' | 'replace' | 'append';
@@ -104,14 +125,14 @@ type RegenerateChoice = 'regenerate' | 'replace' | 'append';
 export async function regenerateLibraryNote(plugin: LibraryNotesPlugin): Promise<void> {
 	const { app } = plugin;
 	const paths = libraryPaths(plugin.settings);
-	const file = app.vault.getFileByPath(paths.libraryNote);
+	const file = findLibraryNote(plugin);
 	if (!file) {
 		await ensureLibraryNote(plugin);
 		return;
 	}
 
 	const plan = planRegeneration(await app.vault.read(file));
-	const name = paths.libraryNoteName;
+	const name = file.basename;
 	const cancel: Choice<RegenerateChoice | null> = { label: 'Cancel', value: null };
 	let message: string;
 	let choices: Choice<RegenerateChoice | null>[];
@@ -143,7 +164,7 @@ export async function regenerateLibraryNote(plugin: LibraryNotesPlugin): Promise
 	// Plan again on the current text, in case the note changed while the window was open.
 	await app.vault.process(file, (data) => applyRegeneration(data, planRegeneration(data), block, choice === 'replace'));
 	await addLibraryClass(plugin, file);
-	new Notice(`Updated the library note "${paths.libraryNote}".`);
+	new Notice(`Updated the library note "${file.path}".`);
 	warnIfNoDataview(plugin);
 }
 

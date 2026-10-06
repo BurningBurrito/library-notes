@@ -48,6 +48,11 @@ export default class LibraryNotesPlugin extends Plugin {
 		if (DEV_BUILD) registerDevChecks(this);
 	}
 
+	/** A secret from Obsidian's keychain (settings store only its name), or "" if not set. */
+	getSecret(name: string): string {
+		return name ? (this.app.secretStorage.getSecret(name) ?? '') : '';
+	}
+
 	async loadSettings() {
 		this.settings = sanitizeSettings((await this.loadData()) as Partial<LibraryNotesSettings> | null);
 	}

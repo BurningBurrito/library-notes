@@ -1,4 +1,7 @@
-import { apiVersion, App, MarkdownView, Notice, Plugin, requestUrl, RequestUrlResponse } from 'obsidian';
+import { apiVersion, App, MarkdownView, Notice, requestUrl, RequestUrlResponse } from 'obsidian';
+import { toBookError } from '../core/errors';
+import type LibraryNotesPlugin from '../main';
+import { googleBooks } from '../sources/google-books';
 
 // Developer checks: confirm, inside the real app, facts the design depends on
 // (DESIGN.md §2). Run "Run developer checks" in the test vault; results are
@@ -31,19 +34,25 @@ interface Result {
 	outcome: Outcome;
 }
 
-export function registerDevChecks(plugin: Plugin): void {
+export function registerDevChecks(plugin: LibraryNotesPlugin): void {
 	plugin.addCommand({
 		id: 'dev-run-checks',
 		name: 'Run developer checks (dev build only)',
 		callback: () => {
-			void runChecks(plugin.app);
+			void runChecks(plugin);
 		},
 	});
 }
 
-async function runChecks(app: App): Promise<void> {
+async function runChecks(plugin: LibraryNotesPlugin): Promise<void> {
+	const { app } = plugin;
 	new Notice('Running developer checks…');
-	const results = [...(await userAgentChecks()), ...(await coverChecks()), ...(await coverTableChecks(app))];
+	const results = [
+		...(await userAgentChecks()),
+		...(await coverChecks()),
+		...(await googleBooksChecks(plugin)),
+		...(await coverTableChecks(app)),
+	];
 	await writeResults(app, results);
 	const failed = results.filter((r) => r.outcome === 'fail').length;
 	new Notice(`Developer checks done: ${failed === 0 ? 'all passed' : `${failed} failed`}. See "${RESULTS_PATH}".`);
@@ -114,6 +123,42 @@ async function coverChecks(): Promise<Result[]> {
 			outcome: missing.status === 404 ? 'pass' : 'fail',
 		},
 	];
+}
+
+// 4. Google Books with the user's key (from the keychain): real answers parsed
+//    into book fields. Only the parsed fields are written, never the key.
+async function googleBooksChecks(plugin: LibraryNotesPlugin): Promise<Result[]> {
+	if (!googleBooks.isConfigured(plugin)) {
+		return [{ check: 'Google Books', expected: '(runs when an API key is set)', actual: 'no key set, skipped', outcome: 'info' }];
+	}
+	const results: Result[] = [];
+	for (const query of ['9781982167387', 'project hail mary']) {
+		try {
+			const found = await googleBooks.search(query, plugin);
+			const first = found[0];
+			if (!first) {
+				results.push(fail(`Google Books search "${query}"`, 'results', 'none'));
+				continue;
+			}
+			const book = await googleBooks.details(first, plugin);
+			const fields = [
+				`${found.length} results`,
+				`title "${book.title}"`,
+				`authors ${book.authors.join(', ') || '(none)'}`,
+				`published ${book.publishDate || '(none)'}`,
+				`${book.pageCount ?? '?'} pages`,
+				`ISBN ${book.isbn13 || book.isbn10 || '(none)'}`,
+				`categories ${book.categories.join(', ') || '(none)'}`,
+				`description ${book.description.length} chars${/<[a-z]/i.test(book.description) ? ' (HTML left in!)' : ''}`,
+				`cover ${book.coverUrl ? new URL(book.coverUrl).searchParams.get('zoom') ?? 'url' : '(none)'}`,
+			];
+			const ok = !!book.title && book.authors.length > 0 && !/<[a-z]/i.test(book.description) && !book.coverUrl.includes('edge=curl');
+			results.push({ check: `Google Books "${query}"`, expected: 'parsed book fields', actual: fields.join(' · '), outcome: ok ? 'pass' : 'fail' });
+		} catch (err) {
+			results.push(fail(`Google Books "${query}"`, 'answer', toBookError(err).message));
+		}
+	}
+	return results;
 }
 
 function header(response: RequestUrlResponse, name: string): string {

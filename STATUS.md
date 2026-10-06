@@ -1,5 +1,5 @@
 # Status: Library Notes (`library-notes`)
-**Current phase:** Phase 3 — Build: **Milestone 1 (Open Library) built, waiting for the user's test**
+**Current phase:** Phase 3 — Build: Milestone 1 tested; **Milestone 2 (Google Books) built, waiting for the user's key and test**
 **Last updated:** 2026-10-05
 
 ## Done
@@ -85,12 +85,34 @@
     regenerate, default source, fallback, language, Open Library check button
   - build, lint, lint without moment types: clean; release main.js 29,978 bytes, no developer-check code
 
+- [x] Milestone 1 tested by the user ("looks good"). Files show: notes for Dirk Gently, Dune (default `Library/`),
+      The Long Dark Tea-Time (in `Synced Notes/Library/All Books`), covers saved with distinct names, notes in the
+      planned format. Two problems found in the files:
+  - **A second MOC was created**: library note name stayed `Library MOC`, the user's file is `LIbrary MOC.md`
+    (Linux is case-sensitive), so `Synced Notes/Library/Library MOC.md` was created beside it and "Replace that
+    table" never ran. **Fix:** the library note is found regardless of capitals (same folder); a notice says
+    which file is used; new notes link to its real name. Removed the plugin-made duplicate from the test vault
+  - **Curly vs straight apostrophes**: Open Library's `Dirk Gently’s` ≠ the user's `Dirk Gently's.md`, so the
+    duplicate check would miss it. **Fix:** duplicates matched ignoring capitals, quote and dash styles, extra
+    spaces (Books folder and subfolders); new file names use straight apostrophes
+- [x] Milestone 2 (Google Books), local commit:
+  - key in Obsidian's keychain (SecretComponent; settings store only the secret's name), sent in the
+    `X-goog-api-key` header (verified live: Google reads the key from the header), never in URLs
+  - search (ISBN → `isbn:`), details from the single-volume answer (full description HTML → text, largest
+    cover, `https`, no page curl), categories through the same genre names as Open Library
+  - plain-language errors from Google's reason codes: invalid key, Books API not enabled, key restricted to
+    other APIs, daily quota used up (verified against Google's real answers)
+  - Google Books appears in the source dropdown and as a search-window button only when a key is set
+  - smoke-tested: all fallback cases (fails → next source with notice; fallback off → default's error; empty →
+    next; offline → no fallback; nothing anywhere → one message); name matching; file names
+  - developer check: Google Books search + details with the user's key, writing only parsed fields
+
 ## In progress
-- [ ] User: test Milestone 1 in the test vault (steps given in chat)
+- [ ] User: get a free Google Books API key, add it in settings, test Milestone 2 (steps in chat); also re-test
+      the two fixes (capitals of `LIbrary MOC`, Dirk Gently duplicate)
 - [ ] Next run of the developer checks should show 31/31 (check-only fix)
 
 ## Next
-- [ ] Phase 3 Milestone 2: Google Books (user's API key in Obsidian's keychain), source buttons, fallback test
 - [ ] Phase 3 Milestone 3: Sign in with Hardcover (user creates a free Hardcover account first)
 - [ ] Phase 4: test · Phase 5: GitHub repo · Phase 6: release and submission
 

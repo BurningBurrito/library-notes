@@ -1,7 +1,7 @@
 import { App, Notice } from 'obsidian';
 import { downloadCover, saveCover } from '../core/covers';
 import { toBookError } from '../core/errors';
-import { ensureFolder, loadTemplate, nextFreePath, notePath, openNote, safeFileName } from '../core/notes';
+import { ensureFolder, findNoteByName, loadTemplate, nextFreePath, notePath, openNote, safeFileName } from '../core/notes';
 import { libraryPaths } from '../core/paths';
 import { renderTemplate } from '../core/render';
 import { ensureLibraryNote } from '../library/moc';
@@ -37,11 +37,12 @@ export async function createBookNote(plugin: LibraryNotesPlugin): Promise<void> 
 	const result = outcome.results.length === 1 ? outcome.results[0] : await pickBook(app, outcome);
 	if (!result) return;
 
-	// Check for an existing note before asking the source for more.
+	// Check for an existing note before asking the source for more. Small
+	// differences (capitals, ' vs ’) still count as the same book.
 	const paths = libraryPaths(settings);
 	const baseName = safeFileName(result.book.title, 'Untitled book');
 	let path = notePath(paths.books, baseName);
-	const existing = app.vault.getFileByPath(path);
+	const existing = findNoteByName(app, paths.books, baseName, true);
 	if (existing) {
 		const choice = await askChoice(
 			app,
@@ -62,14 +63,14 @@ export async function createBookNote(plugin: LibraryNotesPlugin): Promise<void> 
 	try {
 		const book = await withDetails(plugin, outcome.source, result);
 		await ensureFolder(app, paths.books);
-		await ensureLibraryNote(plugin);
+		const libraryNote = await ensureLibraryNote(plugin);
 		const coverPath = await saveBookCover(plugin, outcome.source, book, paths.covers);
 
 		const { template, missing } = await loadTemplate(app, settings.templateFile, DEFAULT_TEMPLATE);
 		if (missing) new Notice(`Template "${settings.templateFile}" was not found, so the built-in template was used.`);
 		const content = renderTemplate(
 			template,
-			buildVariables(book, { coverPath, libraryNoteName: paths.libraryNoteName }),
+			buildVariables(book, { coverPath, libraryNoteName: libraryNote.basename }),
 		);
 		const file = await app.vault.create(path, content);
 		working.hide();

@@ -21,6 +21,8 @@ export interface RequestOptions {
 	body?: string;
 	contentType?: string;
 	throttle?: ThrottleRule;
+	/** Return a 429 to the caller instead of the generic "too many requests" error. */
+	handleRateLimit?: boolean;
 }
 
 /**
@@ -55,7 +57,7 @@ export async function httpRequest(url: string, options: RequestOptions): Promise
 		throw new BookError('network', `Could not reach ${sourceName}. Check your internet connection and try again.`);
 	}
 
-	if (response.status === 429) {
+	if (response.status === 429 && !options.handleRateLimit) {
 		const minutes = Math.ceil(Number(getHeader(response, 'retry-after')) / 60);
 		const wait = minutes > 1 ? `in ${minutes} minutes` : minutes === 1 ? 'in a minute' : 'in a few minutes';
 		throw new BookError('rate-limited', `${sourceName} has received too many requests. Try again ${wait}.`);

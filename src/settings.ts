@@ -1,4 +1,4 @@
-import { App, Notice, PluginSettingTab, SettingDefinitionItem, SettingGroupItem } from 'obsidian';
+import { App, Notice, PluginSettingTab, SecretComponent, SettingDefinitionItem, SettingGroupItem } from 'obsidian';
 import { DEFAULT_TEMPLATE, TEMPLATE_COPY_PATH } from './books/template';
 import { dataviewMessage, dataviewStatus } from './core/dataview';
 import { toBookError } from './core/errors';
@@ -25,6 +25,9 @@ export interface LibraryNotesSettings {
 	useFallback: boolean;
 	/** Two-letter language code used to prefer editions in that language; "" for none. */
 	language: string;
+
+	/** Name of the secret in Obsidian's keychain that holds the Google Books API key (not the key itself). */
+	googleBooksKeySecret: string;
 }
 
 export const DEFAULT_SETTINGS: LibraryNotesSettings = {
@@ -38,6 +41,8 @@ export const DEFAULT_SETTINGS: LibraryNotesSettings = {
 	defaultSource: 'open-library',
 	useFallback: true,
 	language: 'en',
+
+	googleBooksKeySecret: '',
 };
 
 const LANGUAGE_CODE = /^[a-z]{2}$/;
@@ -81,6 +86,7 @@ export class LibraryNotesSettingTab extends PluginSettingTab {
 			{ type: 'group', items: this.generalItems() },
 			{ type: 'group', heading: 'Library note', items: this.libraryNoteItems() },
 			{ type: 'group', heading: 'Sources', items: this.sourceItems() },
+			{ type: 'group', heading: 'Google Books', items: this.googleBooksItems() },
 		];
 	}
 
@@ -185,7 +191,7 @@ export class LibraryNotesSettingTab extends PluginSettingTab {
 			},
 			{
 				name: 'Preferred language',
-				desc: 'Two-letter code, such as en or es. Open Library shows editions in this language first. Leave empty for no preference.',
+				desc: 'Two-letter code, such as en or es. Open Library shows editions in this language first; Google Books shows only books in this language. Leave empty for no preference.',
 				control: {
 					type: 'text',
 					key: 'language',
@@ -202,6 +208,32 @@ export class LibraryNotesSettingTab extends PluginSettingTab {
 						button.setButtonText('Check').onClick(() => void this.checkSource('open-library')),
 					);
 				},
+			},
+		];
+	}
+
+	private googleBooksItems(): SettingGroupItem<SettingKey>[] {
+		return [
+			{
+				name: 'API key',
+				desc: googleKeyDescription(),
+				aliases: ['Google Books API key'],
+				render: (setting) => {
+					setting.addComponent((el) =>
+						new SecretComponent(this.app, el).setValue(this.plugin.settings.googleBooksKeySecret).onChange(async (value) => {
+							this.plugin.settings.googleBooksKeySecret = value;
+							await this.plugin.saveSettings();
+							// The source list (dropdown, search window) depends on whether a key is set.
+							this.update();
+						}),
+					);
+				},
+			},
+			{
+				name: 'Check API key',
+				desc: 'Makes one small request to Google Books with your key.',
+				visible: () => this.plugin.getSecret(this.plugin.settings.googleBooksKeySecret) !== '',
+				action: () => void this.checkSource('google-books'),
 			},
 		];
 	}
@@ -239,4 +271,14 @@ export class LibraryNotesSettingTab extends PluginSettingTab {
 			new Notice(toBookError(err).message, 10_000);
 		}
 	}
+}
+
+function googleKeyDescription(): DocumentFragment {
+	return createFragment((frag) => {
+		frag.appendText('Optional. Google Books needs your own free API key. In the Google Cloud console (');
+		frag.createEl('a', { text: 'console.cloud.google.com', href: 'https://console.cloud.google.com/apis/library/books.googleapis.com' });
+		frag.appendText(
+			'), enable "Books API", then create an API key under Credentials, restricted to the Books API. The key is kept in Obsidian’s keychain, not in this plugin’s settings file. Each search sends what you type, and your key, to Google.',
+		);
+	});
 }
