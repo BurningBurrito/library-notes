@@ -191,7 +191,18 @@ Dataview-off notice; the duplicate window on screen; offline message on screen; 
 - [x] User decisions (2026-10-06): repo **`BurningBurrito/library-notes`** (not `obsidian-library-notes`),
       **public**, DESIGN.md and STATUS.md **published**, create the repo and push `main`. Repo URL updated in
       README, the User-Agent, developer checks, and tests
-- [ ] Security check before the push (user asked: no API keys or similar may be pushed), then create + push
+- [x] Security check before the push (user: "no api keys and the such should get pushed"), all clean:
+  - tracked files listed; not tracked: data.json, main.js, .env, test-vault/, .claude/, node_modules/, tests/.build/
+  - gitleaks 8.30.1: no leaks in all commits, in the exact files to be pushed (git archive), or inside the gzipped
+    test recordings; no personal data or key-like strings in any commit (only the fake `TEST-KEY` in tests)
+  - code: no eval/Function/innerHTML/outerHTML/insertAdjacentHTML/Node or Electron APIs; the Google Books key is
+    read in one place and sent only in the `X-goog-api-key` header to Google (never in URLs, files, or logs);
+    logs contain only unexpected errors (URLs never hold the key)
+  - release build contacts only the README's disclosed hosts; bundle = 23 plugin source files, 0 from
+    node_modules, only `obsidian` external; no developer-check code (26 bytes = an import line, no strings)
+  - CI: release.yml runs on tags only with the built-in token; lint.yml now declares read-only permissions
+  - `npm audit`: moment (dev only, not bundled), as before
+- [ ] Create the repo and push `main`
 - [ ] Next run of the developer checks should show 31/31 (check-only fix)
 
 ## Next
