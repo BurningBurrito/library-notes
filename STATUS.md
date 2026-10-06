@@ -238,6 +238,9 @@ Dataview-off notice; the duplicate window on screen; offline message on screen; 
       Notes, with a sample of the library table (The Hobbit, Project Hail Mary, Dune, from the test recordings).
       Status line says "Released · Obsidian directory review pending"; "Get the Plugin" links to the GitHub
       release until the plugin is listed
+- [x] Same day (user): merged with Dictionary Notes into one "Obsidian Plugins" card (TonyHerreraWebsite
+      91a87d8). Library Notes has its own row there ("Obsidian directory review pending", Get Plugin → GitHub
+      release, Source → repo); the card's visual shows the library table under the Dictionary Notes sample
 
 ## In progress
 - [ ] User: on community.obsidian.md, open the entry → **⋯ → Check for new releases** (or **Request review**) so the
