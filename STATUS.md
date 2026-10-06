@@ -1,5 +1,5 @@
 # Status: Library Notes (`library-notes`)
-**Current phase:** Phase 6 — Release and submission: **1.0.0 draft verified; waiting for the user to approve publishing**, then submission (user submits)
+**Current phase:** Phase 6 — Release and submission: **1.0.0 published; submitted** (waiting for the directory's re-scan)
 **Last updated:** 2026-10-05
 
 ## Done
@@ -227,9 +227,18 @@ Dataview-off notice; the duplicate window on screen; offline message on screen; 
 - [x] Requirements check: description 135 chars, ends with a period, no emoji; no fundingUrl; isDesktopOnly false
       (no Node/Electron APIs in the build); command IDs without the plugin ID; no sample code; README + LICENSE
 
+- [x] User submitted at community.obsidian.md before the release was published; the review said "No release
+      matches your manifest version" (the release was still a draft, invisible to the scanner; tag `1.0.0` was
+      already correct, no "v"). Taken as the go-ahead to publish
+- [x] **Published 1.0.0** (2026-10-06 05:00 UTC) with the release notes shown in chat, marked latest. Checked from
+      outside: public latest-release API = tag 1.0.0 (not draft/pre-release; a first check hit GitHub's 60 s
+      cache of the earlier 404); public download URLs for main.js, manifest.json, styles.css return 200 and are
+      byte-identical to the local build
+
 ## In progress
-- [ ] User: approve publishing the 1.0.0 release (notes drafted in chat)
-- [ ] User: submit at community.obsidian.md (package prepared in chat); then read the automated review
+- [ ] User: on community.obsidian.md, open the entry → **⋯ → Check for new releases** (or **Request review**) so the
+      scan runs now; then share the review results (errors / warnings / recommendations)
+- [ ] Then: Edit listing (long description drafted in chat, categories, payment type Free)
 
 ## Next
 - [ ] After submission: fix anything the automated review flags (new patch release), then Edit listing
