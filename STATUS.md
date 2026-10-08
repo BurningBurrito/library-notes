@@ -1,6 +1,6 @@
 # Status: Library Notes (`library-notes`)
-**Current phase:** Phase 6 — Release and submission: **1.0.0 published; submitted** (waiting for the directory's re-scan)
-**Last updated:** 2026-10-06
+**Current phase:** Phase 6 — Release and submission: **1.0.0 published and listed** in the Community plugins directory
+**Last updated:** 2026-10-08
 
 ## Done
 
@@ -241,16 +241,19 @@ Dataview-off notice; the duplicate window on screen; offline message on screen; 
 - [x] Same day (user): merged with Dictionary Notes into one "Obsidian Plugins" card (TonyHerreraWebsite
       91a87d8). Library Notes has its own row there ("Obsidian directory review pending", Get Plugin → GitHub
       release, Source → repo); the card's visual shows the library table under the Dictionary Notes sample
+- [x] **Listed:** `library-notes` is in obsidianmd/obsidian-releases `community-plugins.json` (seen 2026-10-08);
+      its community.obsidian.md page shows 14 downloads
 
 ## In progress
-- [ ] User: on community.obsidian.md, open the entry → **⋯ → Check for new releases** (or **Request review**) so the
-      scan runs now; then share the review results (errors / warnings / recommendations)
+- [x] User: on community.obsidian.md, open the entry → **⋯ → Check for new releases** (or **Request review**) so the
+      scan runs now (done: the plugin was listed by 2026-10-08)
 - [ ] Then: Edit listing (long description drafted in chat, categories, payment type Free)
 
 ## Next
 - [ ] After submission: fix anything the automated review flags (new patch release), then Edit listing
-- [ ] Once listed (in obsidianmd/obsidian-releases `community-plugins.json`): update the tonyherrera.org card to
-      link to community.obsidian.md/plugins/library-notes and drop "review pending" (in that repo's STATUS.md)
+- [x] Once listed (in obsidianmd/obsidian-releases `community-plugins.json`): update the tonyherrera.org card to
+      link to community.obsidian.md/plugins/library-notes and drop "review pending" (TonyHerreraWebsite 37218b8,
+      2026-10-08)
 
 ## Future releases (not in 1.0)
 - [ ] **Sign in with Hardcover** — code done on branch `feature/hardcover` (commit 6367a5d, also in `main`'s
